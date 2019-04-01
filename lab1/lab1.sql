@@ -309,3 +309,156 @@ GROUP BY supplier.name;
 +--------------+--------------+
 2 rows in set (0.01 sec)
 */
+
+/*
+Question 14: Create a new relation (a table), with the same attributes as the table items using
+the CREATE TABLE syntax where you define every attribute explicitly (i.e. not 
+as a copy of another table). Then fill the table with all items that cost less than the
+average price for items. Remember to define primary and foreign keys in your
+table!*/
+
+CREATE TABLE jbitemNew (
+       id int(11) NOT NULL,
+       name varchar(20) DEFAULT NULL,
+       dept int(11) NOT NULL,
+       price int(11) DEFAULT NULL,
+       qoh int(10) unsigned DEFAULT NULL,
+       supplier int(11) NOT NULL,
+       PRIMARY KEY(id),
+       CONSTRAINT fk_itemNew_dept FOREIGN KEY (dept) REFERENCES jbdept (id),
+       CONSTRAINT fk_itemNew_supplier FOREIGN KEY (supplier) REFERENCES jbsupplier (id)
+);
+INSERT INTO jbitemNew (SELECT * FROM jbitem WHERE price < (SELECT AVG(price) FROM jbitem));
+/*
++-----+-----------------+------+-------+------+----------+
+| id  | name            | dept | price | qoh  | supplier |
++-----+-----------------+------+-------+------+----------+
+|  11 | Wash Cloth      |    1 |    75 |  575 |      213 |
+|  19 | Bellbottoms     |   43 |   450 |  600 |       33 |
+|  21 | ABC Blocks      |    1 |   198 |  405 |      125 |
+|  23 | 1 lb Box        |   10 |   215 |  100 |       42 |
+|  25 | 2 lb Box, Mix   |   10 |   450 |   75 |       42 |
+|  26 | Earrings        |   14 |  1000 |   20 |      199 |
+|  43 | Maze            |   49 |   325 |  200 |       89 |
+| 106 | Clock Book      |   49 |   198 |  150 |      125 |
+| 107 | The 'Feel' Book |   35 |   225 |  225 |       89 |
+| 118 | Towels, Bath    |   26 |   250 | 1000 |      213 |
+| 119 | Squeeze Ball    |   49 |   250 |  400 |       89 |
+| 120 | Twin Sheet      |   26 |   800 |  750 |      213 |
+| 165 | Jean            |   65 |   825 |  500 |       33 |
+| 258 | Shirt           |   58 |   650 | 1200 |       33 |
++-----+-----------------+------+-------+------+----------+
+14 rows in set (0.00 sec)
+*/
+
+/*
+Question 15: Create a view that contains the items that cost less than the average price for
+items
+*/
+CREATE VIEW jbitemView AS (SELECT * FROM jbitem WHERE price < (SELECT AVG(price) FROM jbitem));
+/*
+mysql> SELECT * FROM jbitemView;
++-----+-----------------+------+-------+------+----------+
+| id  | name            | dept | price | qoh  | supplier |
++-----+-----------------+------+-------+------+----------+
+|  11 | Wash Cloth      |    1 |    75 |  575 |      213 |
+|  19 | Bellbottoms     |   43 |   450 |  600 |       33 |
+|  21 | ABC Blocks      |    1 |   198 |  405 |      125 |
+|  23 | 1 lb Box        |   10 |   215 |  100 |       42 |
+|  25 | 2 lb Box, Mix   |   10 |   450 |   75 |       42 |
+|  26 | Earrings        |   14 |  1000 |   20 |      199 |
+|  43 | Maze            |   49 |   325 |  200 |       89 |
+| 106 | Clock Book      |   49 |   198 |  150 |      125 |
+| 107 | The 'Feel' Book |   35 |   225 |  225 |       89 |
+| 118 | Towels, Bath    |   26 |   250 | 1000 |      213 |
+| 119 | Squeeze Ball    |   49 |   250 |  400 |       89 |
+| 120 | Twin Sheet      |   26 |   800 |  750 |      213 |
+| 165 | Jean            |   65 |   825 |  500 |       33 |
+| 258 | Shirt           |   58 |   650 | 1200 |       33 |
++-----+-----------------+------+-------+------+----------+
+14 rows in set (0.00 sec)
+*/
+
+/*
+Question 16: What is the difference between a table and a view? One is static and the other is
+dynamic. Which is which and what do we mean by static respectively dynamic?
+
+A view is dynamic since the view is not manually updated, it reflects the current state of the 
+origin that it is based on. A table is static since for it to be updated you have to manually
+update it/insert rows to it/delete rows from it.
+
+You cannot run INSERT/UPDATE/REMOVE commands on a view.
+*/
+
+/*
+Question 17: Create a view, using only the implicit join notation, i.e. only use where statements
+but no inner join, right join or left join statements, that calculates the total cost of
+each debit, by considering price and quantity of each bought item. (To be used for
+charging customer accounts). The view should contain the sale identifier (debit)
+and total cost
+*/
+CREATE VIEW view_17 AS
+SELECT debit, SUM(price * quantity) AS total_cost FROM jbsale, jbitem WHERE item = id GROUP BY debit;
+/*
++--------+------------+
+| debit  | total_cost |
++--------+------------+
+| 100581 |       2050 |
+| 100582 |       1000 |
+| 100586 |      13446 |
+| 100592 |        650 |
+| 100593 |        430 |
+| 100594 |       3295 |
++--------+------------+
+6 rows in set (0.00 sec)
+*/
+
+/*
+Question 18: Do the same as in (17), using only the explicit join notation, i.e. using only left,
+right or inner joins but no where statement. Motivate why you use the join you do
+(left, right or inner), and why this is the correct one (unlike the others).
+*/
+CREATE VIEW view_18 AS
+SELECT debit, SUM(price * quantity) AS total_cost FROM jbsale LEFT JOIN jbitem ON jbsale.item = jbitem.id GROUP BY debit;
+/*
++--------+------------+
+| debit  | total_cost |
++--------+------------+
+| 100581 |       2050 |
+| 100582 |       1000 |
+| 100586 |      13446 |
+| 100592 |        650 |
+| 100593 |        430 |
+| 100594 |       3295 |
++--------+------------+
+6 rows in set (0.00 sec)
+*/
+
+/*
+Question 19: Oh no! An earthquake!
+a) Remove all suppliers in Los Angeles from the table jbsupplier. This will not
+work right away (you will receive error code 23000) which you will have to
+solve by deleting some other related tuples. However, do not delete more
+tuples from other tables than necessary and do not change the structure of the
+tables, i.e. do not remove foreign keys. Also, remember that you are only
+allowed to use “Los Angeles” as a constant in your queries, not “199” or
+“900”.
+*/
+START TRANSACTION;
+DELETE FROM jbsale WHERE item IN (SELECT id FROM jbitem WHERE supplier IN (SELECT id FROM jbsupplier WHERE city IN (SELECT id FROM jbcity WHERE name = "Los Angeles")));
+
+DELETE FROM jbsupply WHERE supplier IN (SELECT id FROM jbsupplier WHERE city = (SELECT id FROM jbcity WHERE name = "Los Angeles"));
+
+DELETE FROM jbitem WHERE supplier IN (SELECT id FROM jbsupplier WHERE city = (SELECT id FROM jbcity WHERE name = "Los Angeles"));
+
+DELETE FROM jbsupplier WHERE city IN (SELECT id FROM jbcity WHERE name = "Los Angeles");
+COMMIT;
+/*b) Explain what you did and why.
+We located all the dependencies for the supplier table (jbitem, jbsale, jbsupply)
+We then start to remove from the deepest dependency, so we delete jbsale first, then jbsupply,
+then jbitem and last jbsupplier.
+
+We do this in a TRANSACTION because if a system failure occurs between any of these delete commands
+the system will be in an undefined state. Using transaction prevents this.
+
+*/
