@@ -1,6 +1,8 @@
 /*
-Lab 1 report <Student_names and liu_id>
-
+Lab 1 report    Filip, filer358
+                Gustaf, gussv375
+                Jimmy, jimbj685
+                
 All non code should be within SQL-comments /* like this */ 
 
 
@@ -9,7 +11,6 @@ Drop all user created tables that have been created when solving the lab
 */
 
 DROP TABLE IF EXISTS custom_table CASCADE;
-
 
 /* Have the source scripts in the file so it is easy to recreate!*/
 
