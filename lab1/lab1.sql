@@ -1,35 +1,21 @@
 /*
 Lab 1 report <Student_names and liu_id>
 
-All non code should be within SQL-comments /* like this */ 
-
-
 /*
 Drop all user created tables that have been created when solving the lab
 */
 
-DROP TABLE IF EXISTS custom_table CASCADE;
+DROP TABLE IF EXISTS jbitemNew CASCADE;
+DROP TABLE IF EXISTS jbitemView CASCADE;
+DROP VIEW  IF EXISTS view_17 CASCADE;
+DROP VIEW  IF EXISTS view_18 CASCADE;
+DROP VIEW  IF EXISTS jbsale_supply CASCADE;
 
 
 /* Have the source scripts in the file so it is easy to recreate!*/
 
 SOURCE company_schema.sql;
 SOURCE company_data.sql;
-
-/*
-Question 0: Print a message that says "hello world"
-*/
-
-SELECT 'hello world!' AS 'message';
-
-/* Show the output for every question.
-+--------------+
-| message      |
-+--------------+
-| hello world! |
-+--------------+
-1 row in set (0.00 sec)
-*/ 
 
 /*
 Question 1: List all employees, i.e. all tuples in the jbemployee relation
@@ -436,7 +422,7 @@ SELECT debit, SUM(price * quantity) AS total_cost FROM jbsale LEFT JOIN jbitem O
 
 /*
 Question 19: Oh no! An earthquake!
-a) Remove all suppliers in Los Angeles from the table jbsupplier. This will not
+a) Remove all suppliers in Los Angeles from the table jbsupplier. This will notjbsale_supply
 work right away (you will receive error code 23000) which you will have to
 solve by deleting some other related tuples. However, do not delete more
 tuples from other tables than necessary and do not change the structure of the
@@ -461,4 +447,54 @@ then jbitem and last jbsupplier.
 We do this in a TRANSACTION because if a system failure occurs between any of these delete commands
 the system will be in an undefined state. Using transaction prevents this.
 
+*/
+
+
+/* Question 20: An employee has tried to find out which suppliers that have delivered items that
+have been sold. He has created a view and a query that shows the number of items
+sold from a supplier.
+mysql> CREATE VIEW jbsale_supply(supplier, item, quantity) AS
+ -> SELECT jbsupplier.name, jbitem.name, jbsale.quantity
+ -> FROM jbsupplier, jbitem, jbsale
+ -> WHERE jbsupplier.id = jbitem.supplier
+ -> AND jbsale.item = jbitem.id;
+Query OK, 0 rows affected (0.01 sec)
+mysql> SELECT supplier, sum(quantity) AS sum FROM jbsale_supply
+ -> GROUP BY supplier;
++--------------+---------------+
+| supplier | sum(quantity) |
++--------------+---------------+
+| Cannon | 6 |
+| Levi-Strauss | 1 |
+| Playskool | 2 |
+| White Stag | 4 |
+| Whitman's | 2 |
++--------------+---------------+
+5 rows in set (0.00 sec)
+The employee would also like include the suppliers which has delivered some
+items, although for whom no items have been sold so far. In other words he wants
+to list all suppliers, which has supplied any item, as well as the number of these 
+11
+items that have been sold. Help him! Drop and redefine jbsale_supply to
+consider suppliers that have delivered items that have never been sold as well.
+Hint: The above definition of jbsale_supply uses an (implicit) inner join that
+removes suppliers that have not had any of their delivered items sold.
+*/
+CREATE VIEW jbsale_supply(supplier, item, quantity) AS
+SELECT jbsupplier.name, jbitem.name, IFNULL(jbsale.quantity, 0) FROM jbsupplier
+INNER JOIN jbitem ON jbsupplier.id = jbitem.supplier
+LEFT JOIN jbsale  ON jbsale.item = jbitem.id;
+/*
+SELECT supplier, sum(quantity) AS sum FROM jbsale_supply GROUP BY supplier;
++--------------+------+
+| supplier     | sum  |
++--------------+------+
+| Cannon       |    6 |
+| Fisher-Price |    0 |
+| Levi-Strauss |    1 |
+| Playskool    |    2 |
+| White Stag   |    4 |
+| Whitman's    |    2 |
++--------------+------+
+6 rows in set (0.00 sec)
 */
