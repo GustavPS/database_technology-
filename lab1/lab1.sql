@@ -10,15 +10,12 @@ Drop all user created tables that have been created when solving the lab
 */
 
 DROP TABLE IF EXISTS jbitemNew CASCADE;
-DROP TABLE IF EXISTS jbitemView CASCADE;
+DROP VIEW IF EXISTS jbitemView CASCADE;
 DROP VIEW  IF EXISTS view_17 CASCADE;
 DROP VIEW  IF EXISTS view_18 CASCADE;
 DROP VIEW  IF EXISTS jbsale_supply CASCADE;
 
 /* Have the source scripts in the file so it is easy to recreate!*/
-
-SOURCE company_schema.sql;
-SOURCE company_data.sql;
 
 /*
 Question 1: List all employees, i.e. all tuples in the jbemployee relation
@@ -318,6 +315,8 @@ CREATE TABLE jbitemNew (
        CONSTRAINT fk_itemNew_supplier FOREIGN KEY (supplier) REFERENCES jbsupplier (id)
 );
 INSERT INTO jbitemNew (SELECT * FROM jbitem WHERE price < (SELECT AVG(price) FROM jbitem));
+SELECT * FROM jbitemNew;
+
 /*
 +-----+-----------------+------+-------+------+----------+
 | id  | name            | dept | price | qoh  | supplier |
@@ -345,6 +344,7 @@ Question 15: Create a view that contains the items that cost less than the avera
 items
 */
 CREATE VIEW jbitemView AS (SELECT * FROM jbitem WHERE price < (SELECT AVG(price) FROM jbitem));
+SELECT * FROM jbitemView;
 /*
 mysql> SELECT * FROM jbitemView;
 +-----+-----------------+------+-------+------+----------+
@@ -388,6 +388,8 @@ and total cost
 */
 CREATE VIEW view_17 AS
 SELECT debit, SUM(price * quantity) AS total_cost FROM jbsale, jbitem WHERE item = id GROUP BY debit;
+
+SELECT * FROM view_17;
 /*
 +--------+------------+
 | debit  | total_cost |
@@ -409,6 +411,8 @@ right or inner joins but no where statement. Motivate why you use the join you d
 */
 CREATE VIEW view_18 AS
 SELECT debit, SUM(price * quantity) AS total_cost FROM jbsale LEFT JOIN jbitem ON jbsale.item = jbitem.id GROUP BY debit;
+
+SELECT * FROM view_18;
 /*
 +--------+------------+
 | debit  | total_cost |
@@ -464,16 +468,7 @@ mysql> CREATE VIEW jbsale_supply(supplier, item, quantity) AS
 Query OK, 0 rows affected (0.01 sec)
 mysql> SELECT supplier, sum(quantity) AS sum FROM jbsale_supply
  -> GROUP BY supplier;
-+--------------+---------------+
-| supplier | sum(quantity) |
-+--------------+---------------+
-| Cannon | 6 |
-| Levi-Strauss | 1 |
-| Playskool | 2 |
-| White Stag | 4 |
-| Whitman's | 2 |
-+--------------+---------------+
-5 rows in set (0.00 sec)
+
 The employee would also like include the suppliers which has delivered some
 items, although for whom no items have been sold so far. In other words he wants
 to list all suppliers, which has supplied any item, as well as the number of these 
@@ -487,6 +482,8 @@ CREATE VIEW jbsale_supply(supplier, item, quantity) AS
 SELECT jbsupplier.name, jbitem.name, IFNULL(jbsale.quantity, 0) FROM jbsupplier
 INNER JOIN jbitem ON jbsupplier.id = jbitem.supplier
 LEFT JOIN jbsale  ON jbsale.item = jbitem.id;
+
+SELECT supplier, sum(quantity) AS sum FROM jbsale_supply GROUP BY supplier;
 /*
 SELECT supplier, sum(quantity) AS sum FROM jbsale_supply GROUP BY supplier;
 +--------------+------+
