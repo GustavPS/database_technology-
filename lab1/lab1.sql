@@ -1,5 +1,9 @@
 /*
-Lab 1 report <Student_names and liu_id>
+Lab 1 report    Filip, filer358
+                Gustav, gussv375
+                Jimmy, jimbj685
+                
+All non code should be within SQL-comments /* like this */ 
 
 /*
 Drop all user created tables that have been created when solving the lab
@@ -10,7 +14,6 @@ DROP TABLE IF EXISTS jbitemView CASCADE;
 DROP VIEW  IF EXISTS view_17 CASCADE;
 DROP VIEW  IF EXISTS view_18 CASCADE;
 DROP VIEW  IF EXISTS jbsale_supply CASCADE;
-
 
 /* Have the source scripts in the file so it is easy to recreate!*/
 
