@@ -10,13 +10,14 @@ Drop all user created tables that have been created when solving the lab
 */
 
 DROP TABLE IF EXISTS jbitemNew CASCADE;
-DROP VIEW IF EXISTS jbitemView CASCADE;
+DROP VIEW  IF EXISTS jbitemView CASCADE;
 DROP VIEW  IF EXISTS view_17 CASCADE;
 DROP VIEW  IF EXISTS view_18 CASCADE;
 DROP VIEW  IF EXISTS jbsale_supply CASCADE;
 
 /* Have the source scripts in the file so it is easy to recreate!*/
-
+SOURCE company_schema.sql;
+SOURCE company_data.sql;
 /*
 Question 1: List all employees, i.e. all tuples in the jbemployee relation
 */
@@ -443,6 +444,8 @@ DELETE FROM jbsale WHERE item IN (SELECT id FROM jbitem WHERE supplier IN (SELEC
 DELETE FROM jbsupply WHERE supplier IN (SELECT id FROM jbsupplier WHERE city = (SELECT id FROM jbcity WHERE name = "Los Angeles"));
 
 DELETE FROM jbitem WHERE supplier IN (SELECT id FROM jbsupplier WHERE city = (SELECT id FROM jbcity WHERE name = "Los Angeles"));
+
+DELETE FROM jbitemNew WHERE supplier IN (SELECT id FROM jbsupplier WHERE city = (SELECT id FROM jbcity WHERE name = "Los Angeles"));
 
 DELETE FROM jbsupplier WHERE city IN (SELECT id FROM jbcity WHERE name = "Los Angeles");
 COMMIT;
