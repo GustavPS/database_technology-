@@ -6,7 +6,7 @@ constraints. Do you have to initialize the bonus attribute to a value? Why?
 CREATE TABLE jbmanager(
        id INT,	     
        bonus INT,
-       PRIMARY KEY (id),
+       PRIMARY KEY (id)
 );
 
 INSERT INTO jbmanager(id)
