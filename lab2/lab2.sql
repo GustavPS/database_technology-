@@ -1,7 +1,7 @@
 CREATE TABLE jbmanager(
        id INT,	     
        bonus INT,
-       PRIMARY KEY (id),
+       PRIMARY KEY (id)
 );
 
 INSERT INTO jbmanager(id)
