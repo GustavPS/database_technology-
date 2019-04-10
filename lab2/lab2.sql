@@ -1,12 +1,33 @@
 /*
+Lab 1 report    Filip, filer358
+                Gustav, gussv375
+                Jimmy, jimbj685
+                
+All non code should be within SQL-comments /* like this */ 
+
+/*
+Drop all user created tables that have been created when solving the lab
+*/
+DROP TABLE IF EXISTS jbmanager CASCADE;
+DROP TABLE IF EXISTS Customer CASCADE;
+DROP TABLE IF EXISTS Account CASCADE;
+DROP TABLE IF EXISTS Transaction CASCADE;
+
+SOURCE company_schema.sql;
+SOURCE company_data.sql;
+
+/*
 3: Implement your extensions in the database by first creating tables, if any, then
 populating them with existing manager data, then adding/modifying foreign key
 constraints. Do you have to initialize the bonus attribute to a value? Why?
 */
+
+
 CREATE TABLE jbmanager(
        id INT,	     
-       bonus INT,
-       PRIMARY KEY (id)
+       bonus INT DEFAULT 0,
+       PRIMARY KEY (id),
+       FOREIGN KEY (id) REFERENCES jbemployee(id),
 );
 
 INSERT INTO jbmanager(id)
@@ -37,3 +58,41 @@ referred in the jbdept relation.
 */
 UPDATE jbmanager SET bonus = 10000
 WHERE id IN (SELECT DISTINCT manager FROM jbdept);
+
+/*
+5B: Implement your extensions in your database. Add primary key constraints,
+foreign key constraints and integrity constraints to your table definitions. Do
+not forget to correctly set up the new and existing foreign keys. */
+
+CREATE TABLE Customer(
+       id INT AUTO_INCREMENT,
+       city INT,
+       name varchar(255),
+       street_adress varchar(255),
+       PRIMARY KEY(id),
+       FOREIGN KEY(city) REFERENCES jbcity(id)
+);
+
+CREATE TABLE Account(
+       account_number INT AUTO_INCREMENT,
+       balance DOUBLE DEFAULT 0,
+       customer_id INT,
+       PRIMARY KEY(account_number),
+       FOREIGN KEY(customer_id) REFERENCES Customer(id)
+);
+
+CREATE TABLE Transaction(
+       transaction_number INT,
+       employee_id INT,
+       account_number INT,
+       sdate DATE,
+       transaction_type VARCHAR(255),
+       amount DOUBLE,
+       PRIMARY KEY(transaction_number),
+       FOREIGN KEY(employee_id) REFERENCES jbemployee(id),
+       FOREIGN KEY(account_number) REFERENCES Account(account_number)
+);
+
+ALTER TABLE jbsale DROP FOREIGN KEY fk_sale_debit;
+ALTER TABLE jbsale ADD CONSTRAINT fk_sale_debit FOREIGN KEY (debit) REFERENCES Transaction(transaction_number);
+DROP TABLE jbdebit;
