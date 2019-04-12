@@ -17,7 +17,6 @@ DROP TABLE IF EXISTS Transaction CASCADE;
 SOURCE company_schema.sql;
 SOURCE company_data.sql;
 SET FOREIGN_KEY_CHECKS=1;
-
 /*
 3: Implement your extensions in the database by first creating tables, if any, then
 populating them with existing manager data, then adding/modifying foreign key
@@ -30,8 +29,7 @@ No, we do not have to initialize jbmanager's bonus attribute to a value but we c
 CREATE TABLE jbmanager(
        id INT,	     
        bonus INT DEFAULT 0,
-       PRIMARY KEY (id),
-       FOREIGN KEY (id) REFERENCES jbemployee(id)
+       PRIMARY KEY (id)
 );
 
 INSERT INTO jbmanager(id)
@@ -97,5 +95,6 @@ CREATE TABLE Transaction(
        FOREIGN KEY(account_number) REFERENCES Account(account_number)
 );
 
+DELETE FROM jbsale;
 ALTER TABLE jbsale DROP FOREIGN KEY fk_sale_debit;
 ALTER TABLE jbsale ADD CONSTRAINT fk_sale_debit FOREIGN KEY (debit) REFERENCES Transaction(transaction_number);
