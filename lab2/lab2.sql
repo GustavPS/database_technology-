@@ -3,8 +3,6 @@ Lab 1 report    Filip, filer358
                 Gustav, gussv375
                 Jimmy, jimbj685
                 
-All non code should be within SQL-comments /* like this */ 
-
 /*
 Drop all user created tables that have been created when solving the lab
 */
@@ -17,6 +15,7 @@ DROP TABLE IF EXISTS Transaction CASCADE;
 SOURCE company_schema.sql;
 SOURCE company_data.sql;
 SET FOREIGN_KEY_CHECKS=1;
+
 /*
 3: Implement your extensions in the database by first creating tables, if any, then
 populating them with existing manager data, then adding/modifying foreign key
@@ -24,32 +23,52 @@ constraints. Do you have to initialize the bonus attribute to a value? Why?
 
 No, we do not have to initialize jbmanager's bonus attribute to a value but we choose to make it default 0 since we want as few NULL values as possible.
 */
-
-
 CREATE TABLE jbmanager(
        id INT,	     
        bonus INT DEFAULT 0,
        PRIMARY KEY (id)
 );
+/*
+Query OK, 0 rows affected (0.18 sec)
+*/
 
 INSERT INTO jbmanager(id)
 SELECT DISTINCT manager FROM jbdept;
+/*
+Query OK, 11 rows affected (0.01 sec)
+Records: 11  Duplicates: 0  Warnings: 0
+*/
 
 INSERT INTO jbmanager(id)
 SELECT DISTINCT manager FROM jbemployee
 WHERE manager IS NOT NULL AND manager NOT IN (SELECT id FROM jbmanager);
+/*
+Query OK, 1 row affected (0.02 sec)
+Records: 1  Duplicates: 0  Warnings: 0
+*/
 
 ALTER TABLE jbdept DROP FOREIGN KEY fk_dept_mgr;
 ALTER TABLE jbemployee DROP FOREIGN KEY fk_emp_mgr;
+/*
+Query OK, 0 rows affected (0.06 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+*/
 
 ALTER TABLE jbdept
 ADD CONSTRAINT `fk_dept_mgr` 
 FOREIGN KEY (`manager`) REFERENCES `jbmanager`(`id`);
+/*
+Query OK, 19 rows affected (0.18 sec)
+Records: 19  Duplicates: 0  Warnings: 0
+*/
 
 ALTER TABLE jbemployee
 ADD CONSTRAINT `fk_emp_mgr`
 FOREIGN KEY (manager) REFERENCES jbmanager(id);
-
+/*
+Query OK, 25 rows affected (0.17 sec)
+Records: 25  Duplicates: 0  Warnings: 0
+*/
 
 /*
 4: All departments showed good sales figures last year! Give all current department
@@ -60,6 +79,11 @@ referred in the jbdept relation.
 */
 UPDATE jbmanager SET bonus = 10000
 WHERE id IN (SELECT DISTINCT manager FROM jbdept);
+/*
+Query OK, 11 rows affected (0.01 sec)
+Rows matched: 11  Changed: 11  Warnings: 0
+*/
+
 
 /*
 5B: Implement your extensions in your database. Add primary key constraints,
@@ -74,6 +98,9 @@ CREATE TABLE Customer(
        PRIMARY KEY(id),
        FOREIGN KEY(city) REFERENCES jbcity(id)
 );
+/*
+Query OK, 0 rows affected (0.08 sec)
+*/
 
 CREATE TABLE Account(
        account_number INT AUTO_INCREMENT,
@@ -82,6 +109,9 @@ CREATE TABLE Account(
        PRIMARY KEY(account_number),
        FOREIGN KEY(customer_id) REFERENCES Customer(id)
 );
+/*
+Query OK, 0 rows affected (0.07 sec)
+*/
 
 CREATE TABLE Transaction(
        transaction_number INT,
@@ -94,7 +124,19 @@ CREATE TABLE Transaction(
        FOREIGN KEY(employee_id) REFERENCES jbemployee(id),
        FOREIGN KEY(account_number) REFERENCES Account(account_number)
 );
+/*
+Query OK, 0 rows affected (0.07 sec)
+*/
 
 DELETE FROM jbsale;
+/* Query OK, 8 rows affected (0.01 sec) */
 ALTER TABLE jbsale DROP FOREIGN KEY fk_sale_debit;
+/*
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+*/
 ALTER TABLE jbsale ADD CONSTRAINT fk_sale_debit FOREIGN KEY (debit) REFERENCES Transaction(transaction_number);
+/*
+Query OK, 0 rows affected (0.16 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+*/
