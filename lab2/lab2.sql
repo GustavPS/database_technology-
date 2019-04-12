@@ -14,14 +14,15 @@ DROP TABLE IF EXISTS Transaction CASCADE;
 
 SOURCE company_schema.sql;
 SOURCE company_data.sql;
+DROP TABLE jbdebit; /* NOT USED ANYMORE */
 SET FOREIGN_KEY_CHECKS=1;
 
 /*
-3: Implement your extensions in the database by first creating tables, if any, then
+Question 3: Implement your extensions in the database by first creating tables, if any, then
 populating them with existing manager data, then adding/modifying foreign key
 constraints. Do you have to initialize the bonus attribute to a value? Why?
 
-No, we do not have to initialize jbmanager's bonus attribute to a value but we choose to make it default 0 since we want as few NULL values as possible.
+Answere: No, we do not have to initialize jbmanager's bonus attribute to a value but we choose to make it default 0 since we want as few NULL values as possible.
 */
 CREATE TABLE jbmanager(
        id INT,	     
@@ -71,11 +72,9 @@ Records: 25  Duplicates: 0  Warnings: 0
 */
 
 /*
-4: All departments showed good sales figures last year! Give all current department
+Question 4: All departments showed good sales figures last year! Give all current department
 managers $10,000 in bonus. This bonus is an addition to other possible bonuses
 they have.
-Hint: Not all managers are department managers. Update all managers that are
-referred in the jbdept relation.
 */
 UPDATE jbmanager SET bonus = 10000
 WHERE id IN (SELECT DISTINCT manager FROM jbdept);
@@ -86,7 +85,7 @@ Rows matched: 11  Changed: 11  Warnings: 0
 
 
 /*
-5B: Implement your extensions in your database. Add primary key constraints,
+Question 5B: Implement your extensions in your database. Add primary key constraints,
 foreign key constraints and integrity constraints to your table definitions. Do
 not forget to correctly set up the new and existing foreign keys. */
 
