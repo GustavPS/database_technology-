@@ -8,6 +8,7 @@ All non code should be within SQL-comments /* like this */
 /*
 Drop all user created tables that have been created when solving the lab
 */
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS jbmanager CASCADE;
 DROP TABLE IF EXISTS Customer CASCADE;
 DROP TABLE IF EXISTS Account CASCADE;
@@ -15,11 +16,14 @@ DROP TABLE IF EXISTS Transaction CASCADE;
 
 SOURCE company_schema.sql;
 SOURCE company_data.sql;
+SET FOREIGN_KEY_CHECKS=1;
 
 /*
 3: Implement your extensions in the database by first creating tables, if any, then
 populating them with existing manager data, then adding/modifying foreign key
 constraints. Do you have to initialize the bonus attribute to a value? Why?
+
+No, we do not have to initialize jbmanager's bonus attribute to a value but we choose to make it default 0 since we want as few NULL values as possible.
 */
 
 
@@ -27,7 +31,7 @@ CREATE TABLE jbmanager(
        id INT,	     
        bonus INT DEFAULT 0,
        PRIMARY KEY (id),
-       FOREIGN KEY (id) REFERENCES jbemployee(id),
+       FOREIGN KEY (id) REFERENCES jbemployee(id)
 );
 
 INSERT INTO jbmanager(id)
@@ -95,4 +99,3 @@ CREATE TABLE Transaction(
 
 ALTER TABLE jbsale DROP FOREIGN KEY fk_sale_debit;
 ALTER TABLE jbsale ADD CONSTRAINT fk_sale_debit FOREIGN KEY (debit) REFERENCES Transaction(transaction_number);
-DROP TABLE jbdebit;
