@@ -22,7 +22,10 @@ Question 3: Implement your extensions in the database by first creating tables, 
 populating them with existing manager data, then adding/modifying foreign key
 constraints. Do you have to initialize the bonus attribute to a value? Why?
 
-Answere: No, we do not have to initialize jbmanager's bonus attribute to a value but we choose to make it default 0 since we want as few NULL values as possible.
+Answere: Yes, we have to initialize jbmanager's bonus attribute to a value since if the value is NULL we can't treat it like a value (int). If it where NULL we couldn't 
+do question 4 since we use the old value in the bonus attribute and add 10 000 to it. That can't be done if the value in the bonus attribute is NULL since it can't be treater
+like a value (int).
+
 */
 CREATE TABLE jbmanager(
        id INT,	     
@@ -76,7 +79,7 @@ Question 4: All departments showed good sales figures last year! Give all curren
 managers $10,000 in bonus. This bonus is an addition to other possible bonuses
 they have.
 */
-UPDATE jbmanager SET bonus = 10000
+UPDATE jbmanager SET bonus = bonus + 10000
 WHERE id IN (SELECT DISTINCT manager FROM jbdept);
 /*
 Query OK, 11 rows affected (0.01 sec)
