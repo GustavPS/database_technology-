@@ -1,0 +1,86 @@
+1. Consider the relation schema R(A, B, C, D, E, F) and the set of functional
+dependencies F = { FD1: A → BC; FD2: C → AD; FD3: DE → F }. Use the
+Armstrong rules to derive each of the following two functional dependencies. In
+both cases, describe the derivation process step by step (i.e., which rule did you
+apply to which FDs).
+A: C --> B
+FD2: C --> AD
+FD4: C --> A  # Decomposition
+FD5: C --> BC # Transitivity
+FD6: C --> B # Decomposition
+
+B: AE --> F
+FD1: A --> BC
+FD4: A --> C # Decomposition (FD1)
+FD5: A --> AD # Transitivity (FD2)
+FD6: A --> D # Decomposition (FD5)
+FD7: AE --> DE # Augmentation (FD6)
+FD8: AE --> F # Transitivity (FD3)
+
+2. For the aforementioned relation schema with its functional dependencies, compute
+the attribute closure X+ for each of the following two sets of attributes.
+FDs:
+FD1: A --> BC
+FD2: C --> AD
+FD3: DE --> F
+
+A: X = { A }
+X' = { A, B, C}  # FD1
+X' = { A, B, C, D } # FD2
+
+B: X = { C, E }
+X' = { C, E, A, D } # FD2
+X' = { C, E, A, D, F } # FD3
+X' = { A, B, C, D, E, F } # FD1
+
+3. Consider the relation schema R(A, B, C, D, E, F) with the following FDs
+FDs:
+FD1: AB --> CDEF
+FD2: E --> F
+FD3: D --> B
+
+A: Determine the candidate key(s) for R.
+A must be a part of the candidate key since it dosn't exist on the right side, only the left side.
+C and F is not part of the candidate key since it only exists on the right side, and not on the left side.
+{ A }' = { A }
+{ A, B }' = { A, B, C, D, E, F } # Candidate key since the closure of { A, B } consists of every attribute
+{ A, D }' = { A, D, B, C, E, F } # Candidate key since the closure of { A, D } consists of every attribute
+{ A, E }' = { A, E, F, }
+
+B: Note that R is not in BCNF. Which FD(s) violate the BCNF condition?
+FD2 and FD3 violate the BCNF condition since { E } is not a superkey and { D } is not a superkey.
+
+C: Decompose R into a set of BCNF relations, and describe the process step by
+step (don't forget to determine the FDs and the candidate key(s) for all of the
+relation schemas along the way).
+
+Decomposition of R using FD2:
+R1(E, F) # FDs: FD2(E --> F). Candidate key is { E }
+R2(A, B, C, D, E) # FDs: FD3(D --> B) and FD4(AB --> CDE). Candidate key is still { A, B }
+
+Decomposition of R2 using FD3 since R2 is violating BCNF:
+R3(D, B) # FDs: FD3(D --> B) Candidate key is { D }
+R4(A, C, D, E) # FDs: FD5(AD --> CE) Candidate key is { A, D }
+
+The BCNF relations is R1, R3 and R4.
+
+4. Consider the relation schema R(A, B, C, D, E) with the following FDs
+FDs:
+FD1: ABC --> DE
+FD2: BCD --> AE
+FD3: C --> D
+
+A: Show that R is not in BCNF
+C must be a part of the candidate key since it dosn't exist on the right side, only on the left side
+B must be a part of the candidate key since it dosn't exist on the right side, only on the left side.
+E is not a apart of the candidate key since it only exists on the right side, not the left side
+{ C, B }' = { C, D, A, E, B } # Candidate key since the clouse of { C, B } consist of every attribte
+R is not in BCNF because FD3 is not a superkey.
+
+
+B: Decompose R into a set of BCNF relations (describe the process step by step)
+Decomposition of R using FD3:
+R1(C, D) # FDs: FD3(C-->D). Candidate key is { C }
+R2(A, B, C, E) # FDs: FD4(ABC --> E), FD5(BC --> AE). Candidate key is { B, C }
+
+The BCNF relations is R1, R2
