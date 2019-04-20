@@ -1,0 +1,102 @@
+Passenger:
+  FDs:
+    passport_number -> first_name, last_name
+  Primary key:
+    passport_number
+  Candidate keys:
+    passport_number
+  BCNF: Yes
+
+Contact:
+  FDs:
+    passport_number -> email, phone_number
+    email -> passport_number, phone_number
+  Primary key:
+    passport_number
+  Candidate keys:
+    passport_number
+    email
+  BCNF: Yes
+
+Reservation:
+  FDs:
+    reservation_number -> contact, flight_number
+  Primary key:
+    reservation_number
+  Candidate keys:
+    reservation_number
+  BCNF: Yes
+
+Tickets:
+  FDs:
+    ticket_number -> passport_number, reservation_number
+  Primary key:
+    ticket_number
+  Candidate keys:
+    ticket_number
+  BCNF: Yes
+
+Booking:
+  FDs:
+    id -> total_price
+  Primary key:
+    id
+  Candidate keys:
+    id
+  BCNF: Yes
+
+Payment:
+  FDs:
+    used_for -> card_number
+  Primary key:
+    used_for
+  Candidate keys:
+    used_for
+  BCNF: Yes
+
+Flight:
+  FDs:
+    flight_number -> week, weekly_schedule_id
+  Primary key:
+    flight_number
+  Candidate key:
+    flight_number
+  BCNF: Yes
+
+Weekly schedule:
+  FDs:
+    id -> time_of_departure, year, day, price_factor, route_id
+  Primary key:
+    id
+  Candidate key:
+    id
+  BCNF: Yes
+
+Route:
+  FDs:
+    id -> departing_from, arriving_to
+  Primary key:
+    id
+  Candidate key:
+    id
+  BCNF: Yes
+
+City:
+  FDs:
+    id -> name
+    name -> id
+  Primary key:
+    id
+  Candidate keys:
+    id,
+    name
+  BCNF: Yes
+
+Credit card:
+  FDs:
+    card_number -> card_holder, CVV
+  Primary key:
+    card_number
+  Candidate key:
+    card_number
+  BCNF: Yes
