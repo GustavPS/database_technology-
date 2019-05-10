@@ -64,17 +64,24 @@ CREATE PROCEDURE addReservation
  IN day_v VARCHAR(10), IN time_v TIME, IN number_of_passengers INT, OUT output_reservation_nr INT)
 BEGIN
 	DECLARE freeSeats INT DEFAULT -1;
-	DECLARE flight INT;
+	DECLARE flight INT DEFAULT -1;
+	DECLARE weekly_schedule_exist BOOLEAN DEFAULT FALSE;
 	DECLARE weekly_schedule_id INT;
 	START TRANSACTION;
 	      SET weekly_schedule_id = (SELECT id FROM Weekly_schedule WHERE
-	        route_id = (SELECT id FROM Route WHERE departing_from = departure_airport_code AND
+	        time_of_departure = time_v AND Weekly_schedule.day_v = day_v AND
+		route_id = (SELECT id FROM Route WHERE departing_from = departure_airport_code AND
                 arriving_to = arrival_airport_code AND Route.year_v = year_v));
 		
 	      SET flight = (SELECT flight_number FROM Flight WHERE week = week_v
 	      AND Flight.weekly_schedule_id = weekly_schedule_id);
 
-	      IF flight = -1 THEN
+	      SET weekly_schedule_exist = (SELECT COUNT(*) FROM Weekly_schedule WHERE
+	        time_of_departure = time_v AND Weekly_schedule.day_v = day_v AND
+		route_id = (SELECT id FROM Route WHERE departing_from = departure_airport_code AND
+                arriving_to = arrival_airport_code AND Route.year_v = year_v));
+
+	      IF weekly_schedule_exist = FALSE THEN
 	      	 SELECT 'There exist no flight for the given route, date and time' AS 'Message';
 	      ELSE
 		SET freeSeats = calculateFreeSeats(flight);
@@ -93,12 +100,17 @@ CREATE PROCEDURE addPassenger
 (IN reservation_nr INT, IN passport_number INT, IN name_v VARCHAR(30))
 BEGIN
 	DECLARE reservation_exist BOOLEAN DEFAULT FALSE;
+	DECLARE payed BOOLEAN DEFAULT FALSE;
+
+	SET payed = (SELECT COUNT(*) FROM Booking WHERE id = reservation_nr);
 	SET reservation_exist = (SELECT COUNT(*) FROM Reservation WHERE reservation_number = reservation_nr);
 	IF reservation_exist = FALSE THEN
 	  SELECT 'The given reservation number does not exist' AS 'Message';
+	ELSEIF payed = TRUE THEN
+	  SELECT 'The booking has already been payed and no futher passengers can be added' AS 'Message';
 	ELSE
        	  START TRANSACTION;
-	    INSERT INTO Passenger (passport_number, first_name) VALUES (passport_number, name_v);
+	    INSERT IGNORE INTO Passenger (passport_number, first_name) VALUES (passport_number, name_v);
 	    INSERT INTO Ticket (reservation_number, passport_number) VALUES (reservation_nr, passport_number);
 	  COMMIT;
 	END IF;
@@ -126,7 +138,7 @@ BEGIN
 END //
 
 CREATE PROCEDURE addPayment
-(IN reservation_nr INT, cardholder_name VARCHAR(30), credit_card_number INT)
+(IN reservation_nr INT, cardholder_name VARCHAR(30), credit_card_number BIGINT)
 BEGIN
 	DECLARE freeSeats INT;
 	DECLARE reservationSeats INT;
@@ -134,7 +146,8 @@ BEGIN
 	DECLARE reservation_exist BOOLEAN DEFAULT FALSE;
 	DECLARE contact_exist BOOLEAN DEFAULT FALSE;
 	SET reservation_exist = (SELECT COUNT(*) FROM Reservation WHERE reservation_number = reservation_nr);
-	SET contact_exist = (SELECT COUNT(*) FROM Contact WHERE passport_number =
+
+	SET contact_exist = (SELECT COUNT(*) FROM Contact WHERE passport_number IN
 	    		    (SELECT contact FROM Reservation WHERE reservation_number = reservation_nr));
 	IF reservation_exist = FALSE THEN
 	  SELECT 'The given reservation number does not exist' AS 'Message';
@@ -144,12 +157,17 @@ BEGIN
 	  SET flight = (SELECT flight_number FROM Reservation WHERE reservation_number = reservation_nr);
 	  SET freeSeats = calculateFreeSeats(flight);
 
+	  
           SET reservationSeats = (SELECT COUNT(*) FROM Ticket WHERE reservation_number = reservation_nr);
 	  START TRANSACTION;
 	    IF freeSeats >= reservationSeats THEN
 	      INSERT INTO Credit_card (card_number, card_holder) VALUES (credit_card_number, cardholder_name);
 	      INSERT INTO Booking VALUES (reservation_nr, reservationSeats * calculatePrice(flight),
 	      	     	  	  	  credit_card_number);
+	    ELSE
+	      SELECT 'There are not enough seats available on the flight anymore, deleting reservation' AS 'Message';
+	      DELETE FROM Ticket WHERE reservation_number = reservation_nr;
+	      DELETE FROM Reservation WHERE reservation_number = reservation_nr;
 	    END IF;
 	  COMMIT;
 	END IF;

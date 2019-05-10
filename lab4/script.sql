@@ -133,6 +133,12 @@ CREATE VIEW allFlights AS (
   INNER JOIN Airport AS dep ON Route.departing_from = dep.airport_code
   INNER JOIN Airport AS arr ON Route.arriving_to = arr.airport_code);
 
+/* TEST 
+source Question3.sql;
+source Question6.sql;
+*/
+source Question7.sql;
+
 /*
 CALL addYear(2019, 3);
 CALL addDay(2019, 'Monday', 2);

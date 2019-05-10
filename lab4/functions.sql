@@ -5,7 +5,7 @@ DELIMITER //
 CREATE FUNCTION calculateFreeSeats(flight_number INT) RETURNS INT
 BEGIN
 	DECLARE seats INT;
-	SET seats = (SELECT 40 - COUNT(*) FROM Booking WHERE id =
+	SET seats = (SELECT 40 - COUNT(*) FROM Booking WHERE id IN
        	(SELECT reservation_number FROM Reservation WHERE Reservation.flight_number = flight_number));
 	RETURN seats;
 END  //
@@ -17,15 +17,16 @@ BEGIN
 	DECLARE weekdayFactor DOUBLE;
 	DECLARE profitFactor DOUBLE;
 	DECLARE passengers INT;
-	SET routePrice = (SELECT price FROM Route WHERE id =
-	    (SELECT route_id FROM Weekly_schedule WHERE id =
+
+	SET routePrice = (SELECT price FROM Route WHERE id IN
+	    (SELECT route_id FROM Weekly_schedule WHERE id IN
 	    (SELECT weekly_schedule_id FROM Flight WHERE Flight.flight_number = flight_number)));
-	SET weekdayFactor = (SELECT factor FROM Day_factor WHERE day_v = 
-	    (SELECT day_v FROM Weekly_schedule WHERE id =
+	SET weekdayFactor = (SELECT factor FROM Day_factor WHERE day_v IN
+	    (SELECT day_v FROM Weekly_schedule WHERE id IN
 	    (SELECT weekly_schedule_id FROM Flight WHERE Flight.flight_number = flight_number)));
-	SET profitFactor = (SELECT factor FROM Year_factor WHERE year_v =
-	    (SELECT year_v FROM Route WHERE id = 
-	    (SELECT route_id FROM Weekly_schedule WHERE id =
+	SET profitFactor = (SELECT factor FROM Year_factor WHERE year_v IN
+	    (SELECT year_v FROM Route WHERE id IN
+	    (SELECT route_id FROM Weekly_schedule WHERE id IN
 	    (SELECT weekly_schedule_id FROM Flight WHERE Flight.flight_number = flight_number))));
 	SET passengers = 40 - calculateFreeSeats(flight_number);
 
