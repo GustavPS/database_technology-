@@ -1,0 +1,7 @@
+DELIMITER //
+CREATE FUNCTION calculateFreeSeats(flight_number INT) RETURNS INT
+BEGIN
+	
+END  //
+
+DELIMITER ;
