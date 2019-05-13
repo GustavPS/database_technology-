@@ -38,7 +38,7 @@ CREATE TABLE Day_factor (
        day_v varchar(10),
        factor DOUBLE,
        year_v INT,
-       PRIMARY KEY (day_v),
+       PRIMARY KEY (day_v, year_v),
        CONSTRAINT FK_YearFactor FOREIGN KEY (year_v)
        REFERENCES Year_factor (year_v)
 );
@@ -133,11 +133,16 @@ CREATE VIEW allFlights AS (
   INNER JOIN Airport AS dep ON Route.departing_from = dep.airport_code
   INNER JOIN Airport AS arr ON Route.arriving_to = arr.airport_code);
 
-/* TEST 
+/* TEST */
+/*
 source Question3.sql;
+*/
+/*
 source Question6.sql;
 */
+/*
 source Question7.sql;
+*/
 
 /*
 CALL addYear(2019, 3);
@@ -156,3 +161,4 @@ SELECT @res;
 SELECT calculateFreeSeats(1);
 SELECT calculatePrice(1);
 */
+
