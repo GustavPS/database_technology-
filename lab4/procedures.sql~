@@ -1,7 +1,0 @@
-DELIMITER //
-CREATE PROCEDURE addYear(IN y INT, IN factor DOUBLE)
-BEGIN
-	INSERT INTO Profit_factor (year_v, year_factor)
-	VALUES (y, factor);
-END //
-DELIMITER ;
