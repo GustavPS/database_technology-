@@ -42,3 +42,13 @@ Question 10:
    Session 2: IF freeSeats >= reservationSeats THEN
    Session 1: IF freeSeats >= reservationSeats THEN
   Both will pass this IF-statement since neither of them has actually created the booking yet.
+ C:
+  We cannot make the theoretical case occur since we are using transaction (explained above). Transactions make
+  sure that the block of code that is inside the transaction is executed isolated (They are not executed at the
+  same time).
+ D:
+  For the testscripts we don't have to modify them since it is not possible for an overbooking. But if it were
+  possible we would have to put every addPayment call into a transaction, like this:
+  START TRANSACTION;
+   CALL addPayment(@a "Sauron", 787878787878);
+  COMMIT;

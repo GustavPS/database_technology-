@@ -70,6 +70,8 @@ CREATE TABLE Weekly_schedule (
        route_id INT,
        UNIQUE KEY(time_of_departure, day_v, route_id),
        PRIMARY KEY (id),
+       CONSTRAINT FK_DayWeeklyschedule FOREIGN KEY (day_v)
+       REFERENCES Day_factor(day_v),
        CONSTRAINT FK_RouteWeeklyschedule FOREIGN KEY (route_id)
        REFERENCES Route (id)
 );
@@ -98,6 +100,8 @@ CREATE TABLE Ticket (
        passport_number INT,
        ticket_number INT UNIQUE DEFAULT NULL,
        PRIMARY KEY (id),
+       CONSTRAINT FK_ReservationnumberTicket FOREIGN KEY (reservation_number)
+       REFERENCES Reservation(reservation_number),
        CONSTRAINT FK_PassportTicket FOREIGN KEY (passport_number)
        REFERENCES Passenger(passport_number)
 );
