@@ -1,0 +1,44 @@
+Question 8:
+ - How can you protect the credit card information in the database from hackers?
+       We can encrypt the data that we store in that table, if we use som sort of hash function
+       and also use a random salt it will become difficult for hackers to decrypt the credit card
+       data.
+ - Give three advantages of using stored procedures in the database (and thereby
+   execute them on the server) instead of writing the same functions in the frontend of the system (in for example
+   java-script on a web-page)?
+       If you use javascript it is possible for the user to modify the script since the code is visible to the
+       user, this can create a security issue so because of this it is safer to use stored procedure in the
+       database. The DBMS is also very fast and it is more efficient to run procedures in the database and just
+       send the result back to the front-end client instead of letting the front-end client do the calculations on
+       the data.
+
+Question 9:
+A:
+ Session B:
+   START TRANSACTION;
+ Session A:
+   START TRANSACTION;
+   CALL addReservation('HOB', 'MIT', 2011, 52, 'Sunday', '12:00:00', 2, @r);
+B:
+ No, we cannot see the new Reservation in transaction B since it is 'based' on an earlier state of the database,
+ and will not see the new reservation (they are isolated).
+C:
+ SESSION B:
+  CALL addContact(5, 1, '1@gmail.com', 702857710);
+  ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+ Session B will wait until session A commits its transaction, this is because of isolation since transaction A
+ prevents (locks) transaction B from executing queries that modifies data that transaction A has locked.
+
+Question 10:
+ A:
+  An overbooking did not occur when the scripts where executed, this is because the first addPayment was executed
+  and completed before the next addPayment was executed.
+ B:
+  An overbooking cannot occur since we are using transactions inside the addPayment procedure. If we did this
+  without transaction it would be possible, for example if it executed in this order:
+   Session 1: SET freeSeats = calculateFreeSeats(flight);
+   Session 2: SET freeSeats = calculateFreeSeats(flight);
+   // Now both have the same freeSeats value
+   Session 2: IF freeSeats >= reservationSeats THEN
+   Session 1: IF freeSeats >= reservationSeats THEN
+  Both will pass this IF-statement since neither of them has actually created the booking yet.
