@@ -5,8 +5,8 @@ DELIMITER //
 CREATE FUNCTION calculateFreeSeats(flight_number INT) RETURNS INT
 BEGIN
 	DECLARE seats INT;
-	SET seats = (SELECT 40 - COUNT(*) FROM Booking WHERE id IN
-       	(SELECT reservation_number FROM Reservation WHERE Reservation.flight_number = flight_number));
+	SET seats = (SELECT 40 - COUNT(*) FROM Ticket WHERE reservation_number IN
+	(SELECT reservation_number FROM Reservation WHERE Reservation.flight_number = flight_number));
 	RETURN seats;
 END  //
 

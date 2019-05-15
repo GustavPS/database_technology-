@@ -55,6 +55,7 @@ CREATE TABLE Route (
        price DOUBLE,
        year_v INT,
        PRIMARY KEY (id),
+       UNIQUE KEY (departing_from, arriving_to, year_v),
        CONSTRAINT FK_DepartingRoute FOREIGN KEY (departing_from)
        REFERENCES Airport (airport_code),
        CONSTRAINT FK_ArriveRoute FOREIGN KEY (arriving_to)
@@ -67,6 +68,7 @@ CREATE TABLE Weekly_schedule (
        time_of_departure TIME,
        day_v VARCHAR(10),
        route_id INT,
+       UNIQUE KEY(time_of_departure, day_v, route_id),
        PRIMARY KEY (id),
        CONSTRAINT FK_RouteWeeklyschedule FOREIGN KEY (route_id)
        REFERENCES Route (id)
@@ -75,6 +77,7 @@ CREATE TABLE Flight (
        flight_number INT AUTO_INCREMENT,
        week INT,
        weekly_schedule_id INT,
+       UNIQUE KEY (weekly_schedule_id, week),
        PRIMARY KEY (flight_number),
        CONSTRAINT FK_WeeklyscheduleFlight FOREIGN KEY (weekly_schedule_id)
        REFERENCES Weekly_schedule (id)
