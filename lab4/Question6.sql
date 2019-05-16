@@ -28,6 +28,7 @@
 SELECT "Testing answer for 6, handling reservations and bookings" as "Message";
 SELECT "Filling database with flights" as "Message";
 /*Fill the database with data */
+
 CALL addYear(2010, 2.3);
 CALL addDay(2010,"Monday",1);
 CALL addDestination("MIT","Minas Tirith","Mordor");
@@ -36,9 +37,10 @@ CALL addRoute("MIT","HOB",2010,2000);
 CALL addFlight("MIT","HOB", 2010, "Monday", "09:00:00");
 CALL addFlight("MIT","HOB", 2010, "Monday", "21:00:00");
 
+
 SELECT "Test 1: Adding a reservation, expected OK result" as "Message";
 CALL addReservation("MIT","HOB",2010,1,"Monday","09:00:00",3,@a);
-SELECT "Check that the reservation number is returned properly (any number will do):" AS "Message",@a AS "Res. number returned"; 
+SELECT "Check that the reservation number is returned properly (any number will do):" AS "Message",@a AS "Res. number returned";
 
 SELECT "Test 2: Adding a reservation with incorrect flightdetails. Expected answer: There exist no flight for the given route, date and time" as "Message";
 CALL addReservation("MIT","HOB",2010,1,"Tuesday","21:00:00",3,@b); 
@@ -90,10 +92,10 @@ CALL addPassenger(@a,00000003,"Merry Pippins");
 	"There are not enough seats available on the flight anymore, deleting reservation".
 **********************************************************************************************/
 
-
 SELECT "Test 13: Testing if an overbooking occurs" as "Message";
 SELECT "Preparing the reservation:" as "Message";
 /*Fill the database with data */
+
 CALL addReservation("MIT","HOB",2010,1,"Monday","21:00:00",3,@a); 
 CALL addPassenger(@a,13000001,"Saruman"); 
 CALL addPassenger(@a,13000002,"Orch1"); 
@@ -139,3 +141,4 @@ CALL addPassenger(@a,13000041,"Orch40");
 CALL addContact(@a,13000001,"saruman@magic.mail",080667989); 
 SELECT "Now testing. Expected result: There are not enough seats available on the flight anymore, deleting reservation" as "Message";
 CALL addPayment (@a, "Sauron",7878787878); 
+

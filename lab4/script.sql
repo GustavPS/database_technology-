@@ -144,9 +144,9 @@ CREATE VIEW allFlights AS (
 /*
 source Question3.sql;
 */
-/*
+
 source Question6.sql;
-*/
+
 /*
 source Question7.sql;
 */

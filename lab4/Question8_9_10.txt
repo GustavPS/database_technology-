@@ -52,3 +52,11 @@ Question 10:
   START TRANSACTION;
    CALL addPayment(@a "Sauron", 787878787878);
   COMMIT;
+
+Identify one case where a secondary index would be useful. Design the index,
+describe and motivate your design. (Do not implement this.)
+ Ticket would be useful to have a secondary index, the ticket_number attribute could be the secondary index.
+ This would increase the performance since we at the moment are doing a linear search on the ticket_number
+ attribute in the Ticket Trigger. If we use a secondary index we will instead be doing a binary search
+ which is more efficient..
+   CREATE UNIQUE INDEX ticket_number_index ON Ticket(ticket_number) USING BTREE;
