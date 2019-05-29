@@ -94,15 +94,15 @@ CREATE TABLE Reservation (
        CONSTRAINT FK_FlightReservation FOREIGN KEY (flight_number)
        REFERENCES Flight (flight_number)
 );
-CREATE TABLE Ticket (
+CREATE TABLE Ticket(
        id INT AUTO_INCREMENT,
        reservation_number INT,
        passport_number INT,
        ticket_number INT UNIQUE DEFAULT NULL,
        PRIMARY KEY (id),
-       CONSTRAINT FK_ReservationnumberTicket FOREIGN KEY (reservation_number)
+       CONSTRAINT FK_ReservationnumberTickets FOREIGN KEY (reservation_number)
        REFERENCES Reservation(reservation_number),
-       CONSTRAINT FK_PassportTicket FOREIGN KEY (passport_number)
+       CONSTRAINT FK_PassportTickets FOREIGN KEY (passport_number)
        REFERENCES Passenger(passport_number)
 );
 CREATE TABLE Credit_card (
@@ -145,7 +145,7 @@ CREATE VIEW allFlights AS (
 source Question3.sql;
 */
 
-source Question6.sql;
+/*source Question6.sql;*/
 
 /*
 source Question7.sql;
